@@ -1,0 +1,69 @@
+<!doctype HTML>
+<html lang="en">
+<head lang="en">
+	<meta charset='utf-8'>
+	<title>Track the mouse!</title>
+	<style>
+		.line {
+			fill: none;
+			stroke: #000;
+			stroke-width: 1.5px;
+			stroke-dasharray: 2,5;
+		}
+	</style>
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+
+var margin = {top: 10, right: 10, bottom: 20, left: 40},
+    width = 1160 - margin.left - margin.right,
+    height = 800 - margin.top - margin.bottom;
+
+
+var n = 100;
+var pts = [];
+
+
+var line = d3.svg.line()
+    .interpolate("basis-closed")
+    .x(function(d, i) { return d[0]; })
+    .y(function(d, i) { return d[1]; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var svgagain = d3.select("body").select("svg")
+    .on("mousemove", function() { var pt = d3.mouse(this); tick(pt); });
+
+
+
+var path = svg.append("g")
+  .append("path")
+    .data([pts])
+    .attr("class", "line")
+    .attr("d", line);
+
+function tick(pt) {
+
+  // push a new data point onto the back
+  pts.push(pt);
+
+  // Redraw the path:
+  path.attr("d", function(d) { return line(d);})
+
+
+  // If more than 100 points, drop the old data pt off the front
+  if (pts.length > n) {
+	  pts.shift();
+  }
+}
+
+
+
+</script>
+</body>
